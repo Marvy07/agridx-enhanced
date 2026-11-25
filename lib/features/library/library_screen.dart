@@ -1,186 +1,127 @@
 import 'package:flutter/material.dart';
-import 'crop_selector_screen.dart';
-import 'cultivation_tips_screen.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/design/design.dart';
+import '../../shared/widgets/widgets.dart';
 
-class LibraryScreen extends StatelessWidget {
+class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
+  @override
+  State<LibraryScreen> createState() => _LibraryScreenState();
+}
+
+class _LibraryScreenState extends State<LibraryScreen> {
+  String _search = '';
+  String _filter = 'All';
+
+  static const _filters = ['All', 'Cereals', 'Legumes', 'Vegetables', 'Fruits', 'Cash Crops'];
+
+  static final _crops = [
+    _Crop('maize', 'Maize', 'Zea mays', 'Cereals', AppImages.cropMaize, '12 diseases'),
+    _Crop('tomato', 'Tomato', 'Solanum lycopersicum', 'Vegetables', AppImages.cropTomato, '8 diseases'),
+    _Crop('cassava', 'Cassava', 'Manihot esculenta', 'Cereals', AppImages.cropCassava, '6 diseases'),
+    _Crop('rice', 'Rice', 'Oryza sativa', 'Cereals', AppImages.cropRice, '10 diseases'),
+    _Crop('banana', 'Banana', 'Musa', 'Fruits', AppImages.cropBanana, '5 diseases'),
+    _Crop('coffee', 'Coffee', 'Coffea arabica', 'Cash Crops', AppImages.cropCoffee, '7 diseases'),
+    _Crop('cocoa', 'Cocoa', 'Theobroma cacao', 'Cash Crops', AppImages.cropCocoa, '9 diseases'),
+    _Crop('mango', 'Mango', 'Mangifera indica', 'Fruits', AppImages.cropMango, '4 diseases'),
+    _Crop('soybean', 'Soybean', 'Glycine max', 'Legumes', AppImages.cropSoybean, '6 diseases'),
+    _Crop('wheat', 'Wheat', 'Triticum aestivum', 'Cereals', AppImages.cropWheat, '11 diseases'),
+  ];
+
+  List<_Crop> get _visible {
+    return _crops.where((c) {
+      final matchSearch = _search.isEmpty || c.name.toLowerCase().contains(_search.toLowerCase());
+      final matchFilter = _filter == 'All' || c.category == _filter;
+      return matchSearch && matchFilter;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Library', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 2x2 Grid Menu
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.75, // Taller cards for better label fit
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Scroll managed by body
-              children: [
-                _buildMenuCard(
-                  context,
-                  title: 'Crops',
-                  icon: Icons.grass,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CropSelectorScreen()));
-                  },
-                ),
-                _buildMenuCard(
-                  context,
-                  title: 'Pests & Diseases',
-                  icon: Icons.bug_report,
-                ),
-                _buildMenuCard(
-                  context,
-                  title: 'Cultivation Tips',
-                  icon: Icons.eco,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CultivationTipsScreen()));
-                  },
-                ),
-                _buildMenuCard(
-                  context,
-                  title: 'Pests & Disease Alert',
-                  icon: Icons.warning_amber_rounded,
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            // Top Videos Section
-            Row(
-              children: const [
-                Text('TOP VIDEOS', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
-                SizedBox(width: 8),
-                Text('🔥', style: TextStyle(fontSize: 18)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildVideoCard('How to prune your tomatoes correctly'),
-                  _buildVideoCard('Identifying early signs of Fall Armyworm'),
-                  _buildVideoCard('Best fertilizers for maximum yield'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40), // Bottom padding
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuCard(BuildContext context, {required String title, required IconData icon, VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEDE7F6), // Light purple
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 40, color: const Color(0xFF5E35B1)), // Deep purple icon
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF4527A0),
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVideoCard(String title) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: Colors.black12, // Placeholder for actual image
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1592982537447-6f296c0080ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60'), // Placeholder ag image
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(title: const Text('Crop Library')),
+      body: Column(
         children: [
-          // Gradient overlay for text readability
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.8),
-                ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenPadding, 0, AppSpacing.screenPadding, AppSpacing.md),
+            child: TextField(
+              onChanged: (v) => setState(() => _search = v),
+              decoration: const InputDecoration(
+                hintText: 'Search crops...',
+                prefixIcon: Icon(Icons.search_rounded),
               ),
             ),
           ),
-          // Play button
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF43A047), // Green play button
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: const Icon(Icons.play_arrow, color: Colors.white, size: 32),
+          SizedBox(
+            height: 36,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
+              itemCount: _filters.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, i) {
+                final f = _filters[i];
+                final active = f == _filter;
+                return GestureDetector(
+                  onTap: () => setState(() => _filter = f),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: active ? AppColors.primary : AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppSpacing.chipRadius),
+                      border: active ? null : Border.all(color: AppColors.border),
+                    ),
+                    child: Text(
+                      f,
+                      style: AppTextStyles.labelMedium.copyWith(
+                        color: active ? Colors.white : AppColors.textSecondary,
+                        fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          // Title
-          Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+          const SizedBox(height: AppSpacing.md),
+          Expanded(
+            child: _visible.isEmpty
+                ? AppEmptyState(
+                    icon: Icons.local_florist_outlined,
+                    title: 'No crops found',
+                    message: 'Try a different search term or filter.',
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(AppSpacing.screenPadding),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.82,
+                    ),
+                    itemCount: _visible.length,
+                    itemBuilder: (context, i) {
+                      final c = _visible[i];
+                      return AppPhotoCard(
+                        imageUrl: c.imageUrl,
+                        title: c.name,
+                        subtitle: c.sub,
+                        height: double.infinity,
+                        onTap: () => context.go('/library/${c.id}'),
+                        chip: AppChip(label: c.category),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
+}
+
+class _Crop {
+  const _Crop(this.id, this.name, this.sci, this.category, this.imageUrl, this.sub);
+  final String id, name, sci, category, imageUrl, sub;
 }

@@ -65,7 +65,7 @@ class AuthService {
     }
   }
 
-  Future<UserCredential?> registerWithEmail(String email, String password, String name, {String location = '', String farmerType = 'Smallholder'}) async {
+  Future<UserCredential?> registerWithEmail(String email, String password, {String? displayName, String name = '', String location = '', String farmerType = 'Smallholder'}) async {
     try {
       final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -74,7 +74,7 @@ class AuthService {
       
       final UserModel newUser = UserModel(
         uid: userCredential.user!.uid,
-        name: name,
+        name: displayName ?? name,
         email: email,
         location: location,
         farmerType: farmerType,

@@ -1,104 +1,86 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import '../onboarding/onboarding_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../../core/design/design.dart';
+import '../../shared/services/auth_service.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
-
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-        );
-      }
-    });
+    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _ctrl.forward();
+    _navigate();
+  }
+
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(milliseconds: 1800));
+    if (!mounted) return;
+    final prefs = Hive.box('user_preferences');
+    final isGuest = prefs.get('isGuestMode', defaultValue: false) as bool;
+    final hasSeenOnboarding = prefs.get('hasSeenOnboarding', defaultValue: false) as bool;
+    final authState = ref.read(authStateProvider);
+    final isLoggedIn = authState.value != null;
+
+    if (isLoggedIn || isGuest) {
+      context.go('/home');
+    } else if (!hasSeenOnboarding) {
+      context.go('/onboarding');
+    } else {
+      context.go('/login');
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1B5E20),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.eco_outlined,
-                  size: 100,
-                  color: Colors.white,
+      backgroundColor: AppColors.primary,
+      body: Center(
+        child: FadeTransition(
+          opacity: _fade,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 24),
-                const Text(
-                  'AgriDx',
-                  style: TextStyle(
-                    fontSize: 42, // Adjusted for boldness/size feel
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Smart crop care, anywhere',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF81C784), // Slightly brighter green for tagline visibility
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+                child: const Icon(Icons.eco_rounded, color: Colors.white, size: 42),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'AgriDX',
+                style: AppTextStyles.display1.copyWith(color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Smart Farming Intelligence',
+                style: AppTextStyles.bodyMedium.copyWith(color: Colors.white60),
+              ),
+            ],
           ),
-          Positioned(
-            bottom: 80, // Moved up slightly
-            left: 60,
-            right: 60,
-            child: Column(
-              children: [
-                Container(
-                  height: 3,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  child: Stack(
-                    children: [
-                      FractionallySizedBox(
-                        widthFactor: 0.6, // Adjusted to match "half-filled" look
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'v1.0.0',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white54,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

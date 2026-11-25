@@ -1,3 +1,4 @@
+import '../auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../navigation/main_nav_wrapper.dart';
@@ -142,7 +143,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Hive.box('user_preferences').put('hasSeenOnboarding', true);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       },
                       child: const Text(
@@ -166,7 +167,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           Hive.box('user_preferences').put('hasSeenOnboarding', true);
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                            MaterialPageRoute(builder: (context) => const LoginScreen()),
                           );
                         }
                       },
@@ -191,7 +192,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Hive.box('user_preferences').put('hasSeenOnboarding', true);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       },
                       child: const Text(
