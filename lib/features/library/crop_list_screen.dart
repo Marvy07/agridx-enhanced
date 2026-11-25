@@ -88,27 +88,44 @@ class CropListScreen extends ConsumerWidget {
           color: const Color(0xFFF5F5F5),
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(8),
+        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Center(
-                child: Text(
-                  crop.emoji,
-                  style: const TextStyle(fontSize: 48),
-                ),
-              ),
+              child: crop.imageUrl.isNotEmpty
+                  ? Image.network(
+                      crop.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: crop.color.withOpacity(0.12),
+                        child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 40))),
+                      ),
+                      loadingBuilder: (_, child, prog) {
+                        if (prog == null) return child;
+                        return Container(
+                          color: crop.color.withOpacity(0.1),
+                          child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 40))),
+                        );
+                      },
+                    )
+                  : Container(
+                      color: crop.color.withOpacity(0.12),
+                      child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 40))),
+                    ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              crop.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+              child: Text(
+                crop.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
               ),
             ),
           ],

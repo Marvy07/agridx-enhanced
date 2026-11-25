@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CropDetails {
   final String name;
   final String emoji;
+  final String imageUrl;
   final Color color;
   final String growingTemp;
   final String exposition;
@@ -29,6 +30,7 @@ class CropDetails {
   const CropDetails({
     required this.name,
     required this.emoji,
+    this.imageUrl = '',
     required this.color,
     required this.growingTemp,
     required this.exposition,
@@ -59,6 +61,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Maize',
     emoji: '🌽',
+    imageUrl: 'https://images.unsplash.com/photo-1601593768799-76b6e8e35a7a?w=800&auto=format&fit=crop',
     color: Color(0xFFF9A825),
     growingTemp: '20-30 °C',
     exposition: 'Full sun',
@@ -83,6 +86,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Tomato',
     emoji: '🍅',
+    imageUrl: 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=800&auto=format&fit=crop',
     color: Color(0xFFC62828),
     growingTemp: '21-27 °C',
     exposition: 'Full sun',
@@ -107,6 +111,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Cassava',
     emoji: '🍠',
+    imageUrl: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&auto=format&fit=crop',
     color: Color(0xFFE65100),
     growingTemp: '25-29 °C',
     exposition: 'Full sun',
@@ -131,6 +136,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Rice',
     emoji: '🌾',
+    imageUrl: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&auto=format&fit=crop',
     color: Color(0xFF2E7D32),
     growingTemp: '20-35 °C',
     exposition: 'Full sun',
@@ -155,6 +161,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Pepper',
     emoji: '🌶️',
+    imageUrl: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=800&auto=format&fit=crop',
     color: Color(0xFFB71C1C),
     growingTemp: '20-25 °C',
     exposition: 'Full sun',
@@ -179,6 +186,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Banana',
     emoji: '🍌',
+    imageUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=800&auto=format&fit=crop',
     color: Color(0xFFFBC02D),
     growingTemp: '26-30 °C',
     exposition: 'Full sun/Partial shade',
@@ -203,6 +211,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Bean',
     emoji: '🫘',
+    imageUrl: 'https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=800&auto=format&fit=crop',
     color: Color(0xFF795548),
     growingTemp: '15-25 °C',
     exposition: 'Full sun',
@@ -226,7 +235,8 @@ const List<CropDetails> availableCrops = [
   ),
   CropDetails(
     name: 'Bitter Gourd',
-    emoji: '🥒', // Placeholder since there's no native bitter gourd emoji universally supported
+    emoji: '🥒',
+    imageUrl: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=800&auto=format&fit=crop', // Placeholder since there's no native bitter gourd emoji universally supported
     color: Color(0xFF8BC34A),
     growingTemp: '24-27 °C',
     exposition: 'Full sun',
@@ -251,6 +261,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Brinjal',
     emoji: '🍆',
+    imageUrl: 'https://images.unsplash.com/photo-1606923829579-0cb981a83e2e?w=800&auto=format&fit=crop',
     color: Color(0xFF673AB7),
     growingTemp: '22-30 °C',
     exposition: 'Full sun',
@@ -275,6 +286,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Cabbage',
     emoji: '🥬',
+    imageUrl: 'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=800&auto=format&fit=crop',
     color: Color(0xFF4CAF50),
     growingTemp: '15-20 °C',
     exposition: 'Full sun',
@@ -299,6 +311,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Canola',
     emoji: '🌼',
+    imageUrl: 'https://images.unsplash.com/photo-1558618047-f4e70dc25bda?w=800&auto=format&fit=crop',
     color: Color(0xFFFFEB3B),
     growingTemp: '10-30 °C',
     exposition: 'Full sun',
@@ -323,6 +336,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Carrot',
     emoji: '🥕',
+    imageUrl: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=800&auto=format&fit=crop',
     color: Color(0xFFFF9800),
     growingTemp: '15-20 °C',
     exposition: 'Full sun',
@@ -346,7 +360,8 @@ const List<CropDetails> availableCrops = [
   ),
   CropDetails(
     name: 'Cauliflower',
-    emoji: '🥦', 
+    emoji: '🥦',
+    imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop', 
     color: Color(0xFFF1F8E9),
     growingTemp: '15-20 °C',
     exposition: 'Full sun',
@@ -371,6 +386,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Orange',
     emoji: '🍊',
+    imageUrl: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=800&auto=format&fit=crop',
     color: Color(0xFFFF9800),
     growingTemp: '13-38 °C',
     exposition: 'Full sun',
@@ -395,6 +411,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Coffee',
     emoji: '☕',
+    imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop',
     color: Color(0xFF5D4037),
     growingTemp: '15-24 °C',
     exposition: 'Partial shade',
@@ -419,6 +436,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Cotton',
     emoji: '☁️',
+    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop',
     color: Color(0xFFFAFAFA),
     growingTemp: '20-30 °C',
     exposition: 'Full sun',
@@ -443,6 +461,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Onion',
     emoji: '🧅',
+    imageUrl: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop',
     color: Color(0xFFFFCC80),
     growingTemp: '13-24 °C',
     exposition: 'Full sun',
@@ -467,6 +486,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Peanut',
     emoji: '🥜',
+    imageUrl: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=800&auto=format&fit=crop',
     color: Color(0xFFD7CCC8),
     growingTemp: '25-30 °C',
     exposition: 'Full sun',
@@ -491,6 +511,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Potato',
     emoji: '🥔',
+    imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&auto=format&fit=crop',
     color: Color(0xFF8D6E63),
     growingTemp: '15-20 °C',
     exposition: 'Full sun',
@@ -515,6 +536,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Soybean',
     emoji: '🫛',
+    imageUrl: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=800&auto=format&fit=crop',
     color: Color(0xFFC5E1A5),
     growingTemp: '25-30 °C',
     exposition: 'Full sun',
@@ -539,6 +561,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Apple',
     emoji: '🍎',
+    imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=800&auto=format&fit=crop',
     color: Color(0xFFE53935),
     growingTemp: '15-24 °C',
     exposition: 'Full sun',
@@ -563,6 +586,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Blueberry',
     emoji: '🫐',
+    imageUrl: 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=800&auto=format&fit=crop',
     color: Color(0xFF3F51B5),
     growingTemp: '15-25 °C',
     exposition: 'Full sun',
@@ -587,6 +611,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Cherry',
     emoji: '🍒',
+    imageUrl: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800&auto=format&fit=crop',
     color: Color(0xFFC2185B),
     growingTemp: '10-22 °C',
     exposition: 'Full sun',
@@ -611,6 +636,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Grape',
     emoji: '🍇',
+    imageUrl: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=800&auto=format&fit=crop',
     color: Color(0xFF6A1B9A),
     growingTemp: '15-30 °C',
     exposition: 'Full sun',
@@ -635,6 +661,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Peach',
     emoji: '🍑',
+    imageUrl: 'https://images.unsplash.com/photo-1595743825713-25c5b2a44bef?w=800&auto=format&fit=crop',
     color: Color(0xFFFF7043),
     growingTemp: '18-28 °C',
     exposition: 'Full sun',
@@ -658,7 +685,8 @@ const List<CropDetails> availableCrops = [
   ),
   CropDetails(
     name: 'Raspberry',
-    emoji: '🍓', // No native raspberry emoji, using strawberry for red berries
+    emoji: '🍓',
+    imageUrl: 'https://images.unsplash.com/photo-1515558016034-7a5c38b90e18?w=800&auto=format&fit=crop', // No native raspberry emoji, using strawberry for red berries
     color: Color(0xFFE91E63),
     growingTemp: '15-22 °C',
     exposition: 'Full sun',
@@ -682,7 +710,8 @@ const List<CropDetails> availableCrops = [
   ),
   CropDetails(
     name: 'Squash',
-    emoji: '🎃', // No generic squash emoji
+    emoji: '🎃',
+    imageUrl: 'https://images.unsplash.com/photo-1570197571499-166b36435e9f?w=800&auto=format&fit=crop', // No generic squash emoji
     color: Color(0xFFFF9800),
     growingTemp: '20-30 °C',
     exposition: 'Full sun',
@@ -707,6 +736,7 @@ const List<CropDetails> availableCrops = [
   CropDetails(
     name: 'Strawberry',
     emoji: '🍓',
+    imageUrl: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&auto=format&fit=crop',
     color: Color(0xFFD32F2F),
     growingTemp: '15-25 °C',
     exposition: 'Full sun',

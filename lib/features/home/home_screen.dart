@@ -517,7 +517,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
         margin: const EdgeInsets.only(right: 16),
         child: Column(
           children: [
-            Container(
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
               width: 80,
               height: 80,
               decoration: BoxDecoration(
@@ -526,36 +527,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
                 boxShadow: [
                   if (isSelected)
                     BoxShadow(
-                      color: crop.color.withOpacity(0.3),
-                      blurRadius: 20,
+                      color: crop.color.withOpacity(0.35),
+                      blurRadius: 24,
                       offset: const Offset(0, 8),
                     )
                   else
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withOpacity(0.06),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                 ],
                 border: Border.all(
-                  color: isSelected ? crop.color : Colors.transparent,
-                  width: isSelected ? 3 : 0,
+                  color: isSelected ? crop.color : Colors.grey.shade200,
+                  width: isSelected ? 3 : 1.5,
                 ),
               ),
-              child: Center(
-                child: Text(
-                  crop.emoji,
-                  style: const TextStyle(fontSize: 32),
-                ),
+              child: ClipOval(
+                child: crop.imageUrl.isNotEmpty
+                    ? Image.network(
+                        crop.imageUrl,
+                        fit: BoxFit.cover,
+                        width: 80,
+                        height: 80,
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Text(crop.emoji, style: const TextStyle(fontSize: 32)),
+                        ),
+                        loadingBuilder: (_, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: crop.color.withOpacity(0.1),
+                            child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 32))),
+                          );
+                        },
+                      )
+                    : Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 32))),
               ),
             ),
             const SizedBox(height: 8),
-             Text(
+            Text(
               crop.name,
               style: TextStyle(
                 fontSize: 12,
                 color: isSelected ? Colors.black : Colors.grey[600],
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.normal,
               ),
             ),
           ],

@@ -130,3 +130,6 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/images/app_icon.png"
+
+dependency_overrides:
+  camera_web: ^0.3.6

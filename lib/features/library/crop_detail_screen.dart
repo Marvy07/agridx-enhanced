@@ -41,16 +41,58 @@ class CropDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Image Placeholder (tinted by crop color)
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: crop.color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: Text(crop.emoji, style: const TextStyle(fontSize: 80)),
+            // Header — real photo with emoji fallback
+            ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: SizedBox(
+                height: 240,
+                width: double.infinity,
+                child: crop.imageUrl.isNotEmpty
+                    ? Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            crop.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: crop.color.withOpacity(0.18),
+                              child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 80))),
+                            ),
+                            loadingBuilder: (_, child, prog) {
+                              if (prog == null) return child;
+                              return Container(
+                                color: crop.color.withOpacity(0.12),
+                                child: Center(child: CircularProgressIndicator(color: crop.color, strokeWidth: 2)),
+                              );
+                            },
+                          ),
+                          // Gradient overlay for text legibility
+                          Positioned(
+                            bottom: 0, left: 0, right: 0,
+                            child: Container(
+                              height: 80,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [Colors.transparent, Colors.black.withOpacity(0.45)],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 16, left: 20,
+                            child: Text(
+                              crop.name,
+                              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800, shadows: [Shadow(blurRadius: 8, color: Colors.black45)]),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(
+                        color: crop.color.withOpacity(0.18),
+                        child: Center(child: Text(crop.emoji, style: const TextStyle(fontSize: 80))),
+                      ),
               ),
             ),
             const SizedBox(height: 24),
