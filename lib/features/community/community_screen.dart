@@ -217,6 +217,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                                   userName: user.name,
                                   userLocation: user.location,
                                   userAvatar: user.photoURL,
+                                  userRole: user.farmerType,
                                   cropType: _selectedPostCrop,
                                   cropEmoji: cropEmoji,
                                   title: _postTitleController.text.trim(),
@@ -543,38 +544,67 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                 final filters = visibleFilters.map((f) => {'name': f.name, 'emoji': f.emoji}).toList();
 
                 return Row(
-                  children: filters.map((filter) {
-                    final isSelected = _selectedFilter == filter['name'];
-                    return Padding(
+                  children: [
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: ChoiceChip(
-                        label: Text('${filter['emoji']} ${filter['name']}'),
-                        selected: isSelected,
+                        label: const Text('🌍 All'),
+                        selected: _selectedFilter == 'All',
                         onSelected: (selected) {
-                          setState(() {
-                            if (isSelected) {
-                              _selectedFilter = 'All'; // Deselecting reverts to unfiltered
-                            } else {
-                              _selectedFilter = filter['name']!;
-                            }
-                          });
+                          if (selected) {
+                            setState(() {
+                              _selectedFilter = 'All';
+                            });
+                          }
                         },
                         backgroundColor: Colors.white,
                         selectedColor: Colors.blue[50],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                           side: BorderSide(
-                            color: isSelected ? Colors.blue : Colors.grey[300]!,
-                            width: isSelected ? 1.5 : 1,
+                            color: _selectedFilter == 'All' ? Colors.blue : Colors.grey[300]!,
+                            width: _selectedFilter == 'All' ? 1.5 : 1,
                           ),
                         ),
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.blue[800] : Colors.black87,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: _selectedFilter == 'All' ? Colors.blue[800] : Colors.black87,
+                          fontWeight: _selectedFilter == 'All' ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    ...filters.map((filter) {
+                      final isSelected = _selectedFilter == filter['name'];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ChoiceChip(
+                          label: Text('${filter['emoji']} ${filter['name']}'),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              if (isSelected) {
+                                _selectedFilter = 'All'; // Deselecting reverts to unfiltered
+                              } else {
+                                _selectedFilter = filter['name']!;
+                              }
+                            });
+                          },
+                          backgroundColor: Colors.white,
+                          selectedColor: Colors.blue[50],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: isSelected ? Colors.blue : Colors.grey[300]!,
+                              width: isSelected ? 1.5 : 1,
+                            ),
+                          ),
+                          labelStyle: TextStyle(
+                            color: isSelected ? Colors.blue[800] : Colors.black87,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
                 );
               },
             ),
@@ -804,6 +834,32 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                                     ),
                                   ),
                                 ),
+                                if (post.userRole == 'Agricultural Expert' || post.userRole == 'Researcher') ...[
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[50],
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: Colors.blue[100]!),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.verified, size: 10, color: Colors.blue[700]),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          post.userRole == 'Agricultural Expert' ? 'Expert' : 'Researcher',
+                                          style: TextStyle(
+                                            color: Colors.blue[850],
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                                 const Text(' • ', style: TextStyle(color: Colors.grey)),
                                 Flexible(
                                   child: Text(

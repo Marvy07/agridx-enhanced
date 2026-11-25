@@ -30,6 +30,7 @@ class WeatherService {
   }
 
   Future<String> getCityNameFromCoords(double lat, double lon) async {
+    final box = await Hive.openBox('weather_cache');
     final url = 'https://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lon&limit=1&appid=$_apiKey';
     try {
       final response = await http.get(Uri.parse(url));
@@ -45,15 +46,18 @@ class WeatherService {
       if (name.isEmpty) {
         name = await getLocationName(lat, lon);
       }
-      final box = await Hive.openBox('weather_cache');
-      await box.put('location_name', name);
-      return name;
+      if (name != "Unknown Location") {
+        await box.put('location_name', name);
+        return name;
+      }
     } catch (e) {
       final name = await getLocationName(lat, lon);
-      final box = await Hive.openBox('weather_cache');
-      await box.put('location_name', name);
-      return name;
+      if (name != "Unknown Location") {
+        await box.put('location_name', name);
+        return name;
+      }
     }
+    return box.get('location_name', defaultValue: 'Unknown Location');
   }
 
   Future<List<Weather>> getForecast(double lat, double lon) async {

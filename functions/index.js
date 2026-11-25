@@ -50,11 +50,16 @@ exports.onAnswerCreated = functions.firestore
             return null;
         }
 
-        const payload = {
+        const message = {
+            token: fcmToken,
             notification: {
                 title: "New Answer to your Post! 🌿",
                 body: `${answerData.userName} just answered your post about ${postData.cropType}.`,
-                click_action: "FLUTTER_NOTIFICATION_CLICK"
+            },
+            android: {
+                notification: {
+                    clickAction: "FLUTTER_NOTIFICATION_CLICK"
+                }
             },
             data: {
                 postId: postId,
@@ -63,7 +68,7 @@ exports.onAnswerCreated = functions.firestore
         };
 
         try {
-            const response = await admin.messaging().sendToDevice(fcmToken, payload);
+            const response = await admin.messaging().send(message);
             console.log("Successfully sent notification:", response);
             return response;
         } catch (error) {

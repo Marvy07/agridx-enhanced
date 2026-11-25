@@ -48,6 +48,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         userId: user.uid,
         userName: user.name,
         userAvatar: user.photoURL,
+        userRole: user.farmerType,
         body: _answerController.text.trim(),
         timestamp: DateTime.now(),
       );
@@ -99,7 +100,37 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(_currentPost.userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    Row(
+                                      children: [
+                                        Text(_currentPost.userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                        if (_currentPost.userRole == 'Agricultural Expert' || _currentPost.userRole == 'Researcher') ...[
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue[50],
+                                              borderRadius: BorderRadius.circular(6),
+                                              border: Border.all(color: Colors.blue[100]!),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.verified, size: 10, color: Colors.blue[700]),
+                                                const SizedBox(width: 2),
+                                                Text(
+                                                  _currentPost.userRole == 'Agricultural Expert' ? 'Expert' : 'Researcher',
+                                                  style: TextStyle(
+                                                    color: Colors.blue[850],
+                                                    fontSize: 8,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
                                     Text('${_currentPost.userLocation} • ${DateFormat.yMMMd().format(_currentPost.timestamp)}', 
                                       style: TextStyle(color: Colors.grey[600], fontSize: 13)),
                                   ],
@@ -294,6 +325,32 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(answer.userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  if (answer.userRole == 'Agricultural Expert' || answer.userRole == 'Researcher') ...[
+                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.blue[100]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.verified, size: 10, color: Colors.blue[700]),
+                          const SizedBox(width: 2),
+                          Text(
+                            answer.userRole == 'Agricultural Expert' ? 'Expert' : 'Researcher',
+                            style: TextStyle(
+                              color: Colors.blue[850],
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -384,7 +441,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                         try {
                           await ref.read(communityServiceProvider).deleteAnswer(_currentPost.postId, answer.answerId);
                         } catch (e) {
-                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Permission Denied: Post owners need rule updates to delete comments!')));
+                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete answer: $e')));
                         }
                       }
                     },

@@ -108,7 +108,6 @@ class ProfileScreen extends ConsumerWidget {
                         children: [
                           StatBadge(value: user.totalScans.toString(), label: 'Scans', color: themeColor),
                           StatBadge(value: user.totalDiagnoses.toString(), label: 'Diagnoses', color: themeColor),
-                          StatBadge(value: user.savedDiagnoses.length.toString(), label: 'Saved', color: themeColor),
                         ],
                       ),
                     ],
@@ -284,7 +283,7 @@ void _showEditProfileDialog(BuildContext context, WidgetRef ref, UserModel user)
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: selectedFarmerType,
-                items: ['Smallholder', 'Commercial', 'Student', 'Researcher']
+                items: ['Smallholder', 'Commercial', 'Student', 'Researcher', 'Agricultural Expert']
                     .map((type) => DropdownMenuItem(value: type, child: Text(type)))
                     .toList(),
                 onChanged: (val) {
@@ -362,7 +361,7 @@ class StatBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90,
+      width: 120,
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,

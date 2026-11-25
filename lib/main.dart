@@ -18,6 +18,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/settings_provider.dart';
 
 import 'features/onboarding/onboarding_screen.dart';
+import 'features/community/services/community_service.dart';
+import 'features/community/post_detail_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,12 +56,50 @@ void main() async {
   );
 }
 
-class AgriDxApp extends StatelessWidget {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+class AgriDxApp extends ConsumerStatefulWidget {
   const AgriDxApp({super.key});
+
+  @override
+  ConsumerState<AgriDxApp> createState() => _AgriDxAppState();
+}
+
+class _AgriDxAppState extends ConsumerState<AgriDxApp> {
+  @override
+  void initState() {
+    super.initState();
+    _setupNotificationRouting();
+  }
+
+  void _setupNotificationRouting() async {
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+    final initialMsg = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMsg != null) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _handleNotificationClick(initialMsg);
+      });
+    }
+  }
+
+  void _handleNotificationClick(RemoteMessage message) async {
+    final postId = message.data['postId']?.toString();
+    final type = message.data['type']?.toString();
+    
+    if (postId != null && type == 'new_answer') {
+      final post = await ref.read(communityServiceProvider).getPost(postId);
+      if (post != null && navigatorKey.currentState != null) {
+         navigatorKey.currentState!.push(MaterialPageRoute(
+           builder: (_) => PostDetailScreen(post: post),
+         ));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'AgriDx',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

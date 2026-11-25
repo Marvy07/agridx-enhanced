@@ -233,7 +233,7 @@ class _CropScanScreenState extends ConsumerState<CropScanScreen>
               final rawLabel = topResult['label'] as String;
               final confidenceVal = topResult['confidenceValue'] as double;
               
-              if (!kIsWeb && confidenceVal < 0.45) {
+              if (!kIsWeb && confidenceVal < 0.50) {
                 _showNotACropDialog(
                   'The AI could not confidently identify a crop in this image '
                   '(${(confidenceVal * 100).toStringAsFixed(0)}% confidence).\n\n'
@@ -306,6 +306,19 @@ class _CropScanScreenState extends ConsumerState<CropScanScreen>
                 final topResult = results.first;
                 final rawLabel = topResult['label'] as String;
                 final confidenceVal = topResult['confidenceValue'] as double;
+
+                if (!kIsWeb && confidenceVal < 0.50) {
+                  _showNotACropDialog(
+                    'The AI could not confidently identify a crop in this image '
+                    '(${(confidenceVal * 100).toStringAsFixed(0)}% confidence).\n\n'
+                    'For best results:\n'
+                    '- Hold the leaf close to fill the frame\n'
+                    '- Ensure good lighting\n'
+                    '- Scan the leaf side, not the background',
+                  );
+                  return;
+                }
+
                 final isHealthy = rawLabel.toLowerCase().contains('healthy');
 
                 final displayName = isHealthy

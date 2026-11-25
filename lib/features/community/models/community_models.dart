@@ -6,6 +6,7 @@ class CommunityPost {
   final String userName;
   final String userLocation;
   final String userAvatar;
+  final String userRole;
   final String cropType;
   final String cropEmoji;
   final String title;
@@ -24,6 +25,7 @@ class CommunityPost {
     required this.userName,
     required this.userLocation,
     required this.userAvatar,
+    this.userRole = 'Smallholder',
     required this.cropType,
     required this.cropEmoji,
     required this.title,
@@ -44,6 +46,7 @@ class CommunityPost {
       'userName': userName,
       'userLocation': userLocation,
       'userAvatar': userAvatar,
+      'userRole': userRole,
       'cropType': cropType,
       'cropEmoji': cropEmoji,
       'title': title,
@@ -65,6 +68,7 @@ class CommunityPost {
       userName: map['userName'] ?? '',
       userLocation: map['userLocation'] ?? '',
       userAvatar: map['userAvatar'] ?? '',
+      userRole: map['userRole'] ?? 'Smallholder',
       cropType: map['cropType'] ?? 'All',
       cropEmoji: map['cropEmoji'] ?? '🌍',
       title: map['title'] ?? '',
@@ -85,6 +89,7 @@ class CommunityAnswer {
   final String userId;
   final String userName;
   final String userAvatar;
+  final String userRole;
   final String body;
   final int likes;
   final int dislikes;
@@ -97,6 +102,7 @@ class CommunityAnswer {
     required this.userId,
     required this.userName,
     required this.userAvatar,
+    this.userRole = 'Smallholder',
     required this.body,
     this.likes = 0,
     this.dislikes = 0,
@@ -111,6 +117,7 @@ class CommunityAnswer {
       'userId': userId,
       'userName': userName,
       'userAvatar': userAvatar,
+      'userRole': userRole,
       'body': body,
       'likes': likes,
       'dislikes': dislikes,
@@ -126,6 +133,7 @@ class CommunityAnswer {
       userId: map['userId'] ?? '',
       userName: map['userName'] ?? '',
       userAvatar: map['userAvatar'] ?? '',
+      userRole: map['userRole'] ?? 'Smallholder',
       body: map['body'] ?? '',
       likes: map['likes'] ?? 0,
       dislikes: map['dislikes'] ?? 0,

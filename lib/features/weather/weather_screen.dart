@@ -132,7 +132,8 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
           if (cachedForecast.isNotEmpty) {
             forecast = cachedForecast;
           }
-          locName = "$locName (Cached)";
+          final cachedLoc = await weatherService.getCachedLocationName();
+          locName = "$cachedLoc (Cached)";
         } else {
           throw Exception("Unable to fetch live weather and no cached data available. Check your internet connection.");
         }
@@ -554,20 +555,26 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   }
 
   Widget _buildForecastSection() {
-    // Group forecast by day starting tomorrow
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    // Group forecast by day starting tomorrow, using formatted calendar keys to avoid month crossover bugs
+    final now = DateTime.now();
+    final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
     final Map<String, List<Weather>> dailyGroups = {};
     
     for (var w in _forecast) {
-      if (w.date != null && (w.date!.day >= tomorrow.day || w.date!.month > tomorrow.month)) {
-        final dayStr = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][w.date!.weekday-1];
-        dailyGroups.putIfAbsent(dayStr, () => []).add(w);
+      if (w.date != null) {
+        final dayKey = "${w.date!.year}-${w.date!.month.toString().padLeft(2, '0')}-${w.date!.day.toString().padLeft(2, '0')}";
+        // Exclude today and ensure the forecast is in the future
+        if (dayKey != todayStr && w.date!.isAfter(now)) {
+          dailyGroups.putIfAbsent(dayKey, () => []).add(w);
+        }
       }
     }
 
-    final dailyForecasts = dailyGroups.entries.take(5).map((entry) {
-      final dayName = entry.key;
-      final group = entry.value;
+    final sortedKeys = dailyGroups.keys.toList()..sort();
+    final dailyForecasts = sortedKeys.take(5).map((key) {
+      final group = dailyGroups[key]!;
+      final date = group.first.date!;
+      final dayName = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][date.weekday-1];
       
       // Get max temp and most frequent condition
       double maxTemp = -100;
@@ -577,7 +584,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
         if (w.temperature?.celsius != null && w.temperature!.celsius! > maxTemp) {
           maxTemp = w.temperature!.celsius!;
         }
-        conditionCode ??= w.weatherConditionCode; // Simplified
+        conditionCode ??= w.weatherConditionCode;
       }
       
       return _buildForecastDay(
@@ -643,11 +650,15 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
       final hourStr = i == 0 ? 'Now' : '$h $ampm';
       
       Weather? hourWeather;
-      for (var w in _forecast) {
-        if (w.date != null && w.date!.difference(hour).abs() < const Duration(hours: 2)) {
-          hourWeather = w;
-          break;
-        }
+      if (_forecast.isNotEmpty) {
+        // Find the forecast record closest to this target hour
+        hourWeather = _forecast.reduce((a, b) {
+          if (a.date == null) return b;
+          if (b.date == null) return a;
+          final diffA = a.date!.difference(hour).abs();
+          final diffB = b.date!.difference(hour).abs();
+          return diffA < diffB ? a : b;
+        });
       }
       hourWeather ??= _currentWeather;
 
@@ -685,11 +696,12 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   _Status _calculateSprayingStatus(Weather? w) {
     if (w == null) return _Status.moderate;
     final humidity = w.humidity ?? 0;
+    final windSpeedKmh = (w.windSpeed ?? 0) * 3.6; // Convert m/s to km/h
     final desc = w.weatherDescription?.toLowerCase() ?? "";
     final isRaining = desc.contains('rain') || desc.contains('drizzle') || desc.contains('storm');
     
-    if (isRaining || humidity > 80) return _Status.unfavourable;
-    if (humidity < 60) return _Status.optimal;
+    if (isRaining || humidity > 80 || windSpeedKmh >= 15) return _Status.unfavourable;
+    if (humidity < 60 && windSpeedKmh < 12) return _Status.optimal;
     return _Status.moderate;
   }
 

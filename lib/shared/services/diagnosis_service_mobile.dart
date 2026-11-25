@@ -79,6 +79,11 @@ class DiagnosisService {
       final redOverGreen  = avgR > 0 ? avgG / avgR : 1.0;   // < 0.75 → very red
       final blueOverGreen = avgB > 0 ? avgG / avgB : 1.0;   // < 0.75 → very blue
 
+      // Calculate Saturation (Relative Chroma) to filter out neutral grey/white/black surfaces.
+      final maxVal = [avgR, avgG, avgB].reduce(max);
+      final minVal = [avgR, avgG, avgB].reduce(min);
+      final saturation = maxVal > 0 ? (maxVal - minVal) / maxVal : 0.0;
+
       print('🔍 Validation — '
             'R:${avgR.toStringAsFixed(0)} '
             'G:${avgG.toStringAsFixed(0)} '
@@ -86,7 +91,8 @@ class DiagnosisService {
             'brightness:${brightness.toStringAsFixed(0)} '
             'gFraction:${gFraction.toStringAsFixed(3)} '
             'G/R:${redOverGreen.toStringAsFixed(2)} '
-            'G/B:${blueOverGreen.toStringAsFixed(2)}');
+            'G/B:${blueOverGreen.toStringAsFixed(2)} '
+            'saturation:${saturation.toStringAsFixed(3)}');
 
       // ── Filter 1: Too dark ──────────────────────────────────
       if (brightness < 30) {
@@ -110,6 +116,12 @@ class DiagnosisService {
       // and cool-toned (open sky) where blue >> green.
       // Use OR so either extreme of non-green triggers rejection.
       if (redOverGreen < 0.72 || blueOverGreen < 0.72) {
+        return 'This doesn\'t look like a crop or leaf image.\nPlease scan a plant leaf for accurate diagnosis.';
+      }
+
+      // ── Filter 5: Too desaturated (Neutral grey/white/black) ─────
+      // Catches neutral surfaces like white/grey tables, paper, walls, concrete
+      if (saturation < 0.12) {
         return 'This doesn\'t look like a crop or leaf image.\nPlease scan a plant leaf for accurate diagnosis.';
       }
 
@@ -209,7 +221,7 @@ class DiagnosisService {
         for (int i = 0; i < probs.length; i++) {
           final lbl = _labels![i].toLowerCase();
           if (lbl.contains(filterLower)) {
-            probs[i] = probs[i] * 6.0; // 6x confidence boost for the selected crop
+            probs[i] = probs[i] * 100.0; // 100x confidence boost to overcome cross-crop visual confusion (e.g. Tomato vs Potato)
           }
         }
         

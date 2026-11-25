@@ -23,7 +23,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   bool _isLoading = false;
   bool _acceptTerms = false;
 
-  final List<String> _farmerTypes = ['Smallholder', 'Commercial', 'Student', 'Researcher'];
+  final List<String> _farmerTypes = ['Smallholder', 'Commercial', 'Student', 'Researcher', 'Agricultural Expert'];
 
   @override
   void dispose() {

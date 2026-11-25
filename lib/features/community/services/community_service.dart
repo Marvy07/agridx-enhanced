@@ -62,6 +62,12 @@ class CommunityService {
     await _db.collection('posts').doc(post.postId).update(post.toMap());
   }
 
+  Future<CommunityPost?> getPost(String postId) async {
+    final doc = await _db.collection('posts').doc(postId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return CommunityPost.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+  }
+
   Future<void> deletePost(String postId) async {
     await _db.collection('posts').doc(postId).delete();
   }
@@ -154,15 +160,17 @@ class CommunityService {
   }
 
   Future<void> deleteAnswer(String postId, String answerId) async {
-    final batch = _db.batch();
-    
     final answerRef = _db.collection('posts').doc(postId).collection('answers').doc(answerId);
-    batch.delete(answerRef);
     
-    final postRef = _db.collection('posts').doc(postId);
-    batch.update(postRef, {'answersCount': FieldValue.increment(-1)});
+    // Perform operations sequentially instead of a batch, so if one fails due to rules, the others might succeed.
+    await answerRef.delete();
     
-    await batch.commit();
+    try {
+      final postRef = _db.collection('posts').doc(postId);
+      await postRef.update({'answersCount': FieldValue.increment(-1)});
+    } catch (e) {
+      print('Could not decrement answersCount: $e');
+    }
   }
 
   Stream<List<CommunityAnswer>> getAnswersStream(String postId) {

@@ -1,0 +1,125 @@
+========================================================================
+             AGRIDX THESIS: CHAPTER 3 DIAGRAM INSERTION ROADMAP
+========================================================================
+This file contains the exact roadmap showing where and how to fit all 
+SEVEN diagrams into your thesis document "AgriDx_Chapter3_UBa-3 (1) demo  11.docx".
+
+All figure references have been audited and corrected to be strictly 
+chronological (from Figure 3.1 to Figure 3.7) to match standard COLTECH 
+formatting.
+
+------------------------------------------------------------------------
+📂 PICTURES LOCATION ON YOUR COMPUTER:
+"C:\Users\Placi\OneDrive\Documents\Gisele's shii\"
+- 1_system_architecture.png
+- 2_ml_training_pipeline.png
+- 3_diagnosis_flow.png
+- 4_use_case.png
+- 5_erd.png
+- 6_training_curves.png
+- 7_dfd.png
+------------------------------------------------------------------------
+
+========================================================================
+MAP 1: DIAGRAM 1 - SYSTEM ARCHITECTURE (Section 3.5.1)
+========================================================================
+* Search in Word for:
+  "Cloud Services Layer: Firebase backend services (Firestore, Storage, Authentication) and external APIs (Gemini, OpenWeatherMap, NewsAPI) accessed when internet is available."
+* Insert "1_system_architecture.png" immediately after that sentence.
+* Copy and paste the text below:
+
+Figure 3.1: AgriDx Hybrid Edge-Cloud Multi-Layer System Architecture.
+
+The multi-layered system architecture of the AgriDx mobile platform is illustrated in Figure 3.1. The system comprises a local mobile client layer and a cloud-based services layer. The mobile client implements a Presentation Layer utilizing the Flutter cross-platform UI framework and Riverpod reactive state management to govern user interactions. The Business Logic Layer operates using Dart-based service classes—such as DiagnosisService and AuthService—coordinating local caches via Hive database storage. When offline, diagnostic queries are routed directly to the on-device AI layer, which runs a quantized 2.6MB MobileNetV2 model using the TFLite interpreter. When internet connectivity is detected, services communicate over secure HTTPS/gRPC protocols to interface with Firebase backend services (Auth, Firestore, Storage) and external cloud APIs (Google Gemini, OpenWeatherMap, and NewsAPI) to deliver real-time enrichments.
+
+* Succeeding Sentence in Word:
+  "3.5.2 Hybrid Diagnosis Pipeline"
+
+========================================================================
+MAP 2: DIAGRAM 3 - DIAGNOSIS FLOW (Section 3.5.2)
+========================================================================
+* Search in Word for:
+  "Gemini Vision is also available as an alternative primary diagnostic engine when TFLite confidence is low (below 65%)."
+* Insert "3_diagnosis_flow.png" immediately after that sentence.
+* Copy and paste the text below:
+
+Figure 3.2: Hybrid Crop Disease Diagnosis and Advisory Decision Pipeline.
+
+Figure 3.2 details the logical execution flow of the AgriDx hybrid crop disease diagnostic pipeline. Upon capturing or selecting a leaf image, preprocessing scales and normalizes the matrix for immediate evaluation by the on-device TFLite model. The pipeline then forks based on connectivity: if offline, the system retrieves cached general treatments from the local Hive database. If online, the pipeline executes a secondary decision gate based on classification confidence: predictions with confidence scores equal to or exceeding 65% are enriched with highly detailed, structured organic and chemical remedies via the Gemini 2.0 Flash API; ambiguous predictions scoring under 65% are routed to the Gemini Vision API for primary visual re-evaluation. The processed results are then presented to the user through an interactive, tabbed dashboard.
+
+* Succeeding Sentence in Word:
+  "3.5.3 Application Module Architecture"
+
+========================================================================
+MAP 3: DIAGRAM 2 - ML TRAINING PIPELINE (Section 3.6.2)
+========================================================================
+* Search in Word for:
+  "...batching in groups of 32 images using tf.data.Dataset.batch(32) and prefetched using .prefetch(tf.data.AUTOTUNE) to optimise GPU utilisation during training."
+* Insert "2_ml_training_pipeline.png" immediately after that sentence.
+* Copy and paste the text below:
+
+Figure 3.3: Machine Learning Model Development, Quantization, and Mobile Deployment Pipeline.
+
+The complete machine learning workflow developed for AgriDx is outlined in Figure 3.3. The pipeline is divided into two phases: cloud-based model training and on-device mobile deployment. The process begins with loading the 55,448-image PlantVillage dataset on Google Colab, applying a stratified train-validation-test split (70/15/15), and performing real-time data augmentations (flips, contrast, brightness). The classification model utilizes a transfer learning structure, freezing the pre-trained ImageNet weights of a MobileNetV2 base while optimizing a custom classification head (Global Average Pooling, Dense-256 with ReLU, 30% Dropout, and Dense-38 with Softmax). Following training, the best checkpoint is converted to a highly compact 2.6MB TFLite model using dynamic range quantization, which is then bundled into the Flutter assets directory for native runtime initialization.
+
+* Succeeding Sentence in Word:
+  "3.6.3 Model Architecture"
+
+========================================================================
+MAP 4: DIAGRAM 6 - TRAINING CURVES (Section 3.6.4)
+========================================================================
+* Search in Word for:
+  "Test set accuracy on the held-out 15% test split was 95.4%, confirming good generalisation without significant overfitting."
+* Insert "6_training_curves.png" immediately after that sentence.
+* Copy and paste the text below:
+
+Figure 3.4: MobileNetV2 Model Training History (Accuracy and Loss Curves over 14 Epochs).
+
+Figure 3.4 presents the convergence curves recorded during model training. The left plot traces classification accuracy, showing training accuracy rising to 96.8% and validation accuracy climbing to 94.7% over 14 epochs. The right plot outlines categorical cross-entropy loss, falling from initial peaks to 0.1 (training) and 0.15 (validation) respectively. The converging curves demonstrate that the model successfully abstracted key botanical visual features from the PlantVillage dataset without exhibiting signs of severe overfitting. The stabilization of validation loss beyond epoch 11 triggered the early stopping callback at epoch 14, restoring the best model weights for export.
+
+* Succeeding Sentence in Word:
+  "3.6.5 TFLite Conversion and Optimisation"
+
+========================================================================
+MAP 5: DIAGRAM 4, 5, & 7 - SYSTEM MODELING SECTION (Section 3.7.6)
+========================================================================
+In your Word document, find the end of Section 3.7.5:
+* Search in Word for:
+  "...and is compatible with both Android and web platforms — a cross-platform consideration important for the Flutter web build."
+* Hit Enter to create a new line.
+* Copy and paste the entire text below (which includes Use Case, ERD, and DFD):
+
+3.7.6 System Modeling
+In accordance with standard software engineering practices, the AgriDx platform is modeled conceptually to define its functional interactions, database relationships, and processing streams.
+
+3.7.6.1 Use Case Diagram
+A Use Case Diagram outlines the functional scope of the application, representing the boundaries of the system and the relationships between actors and the specific functions they trigger. The AgriDx system involves three primary actors: the Farmer, the Agricultural Extension Officer, and the System Admin (Firebase Console). These interactions are mapped in Figure 3.5.
+
+[INSERT IMAGE "4_use_case.png" HERE]
+
+Figure 3.5: Use Case Diagram for the AgriDx System.
+
+As illustrated in Figure 3.5, the system boundary encapsulates the primary functional modules of the AgriDx mobile client. The Farmer actor interacts with user-centric use cases, including initiating on-device scans, browsing the crop library, posting queries inside the community forum, and requesting advisory chats with the generative AgriBot. The Agricultural Extension Officer actor interacts with the system to review farmer postings, provide expert diagnostic validations, and publish regional disease outbreak warnings. System Administrators interact with administrative use cases, including user profile maintenance, storage sanitation, and cloud service configuration via the Firebase management console.
+
+3.7.6.2 Entity-Relationship Diagram (ERD)
+An Entity-Relationship Diagram (ERD) is a structural model mapping the database schema, illustrating the logical relationships between database collections. The data architecture of the AgriDx Firestore backend is mapped in Figure 3.6.
+
+[INSERT IMAGE "5_erd.png" HERE]
+
+Figure 3.6: Entity-Relationship Diagram (ERD) for the Firestore Database Schema.
+
+Figure 3.6 maps the Entity-Relationship Diagram (ERD) of the AgriDx system database schema, illustrating the logical relationships between Firestore database collections. The Users collection stores persistent profiles containing names, emails, farmer types, and total scan tallies, maintaining a one-to-many relationship with the Posts, Answers, and Diagnoses collections. The Posts collection houses community discussions (including titles, crop categories, image links, and likes), containing nested subcollections of Answers that link back to the contributing user profiles. The Diagnoses collection persists audit logs of crop scans, storing calculated class names, confidence percentages, and timestamps for historical tracking.
+
+3.7.6.3 Data Flow Diagram (DFD)
+A Data Flow Diagram (DFD) Level 1 traces the flow and processing of data within the application, mapping information exchanges between external entities, system processes, and data stores. The data streams are mapped in Figure 3.7.
+
+[INSERT IMAGE "7_dfd.png" HERE]
+
+Figure 3.7: Data Flow Diagram (DFD) Level 1 representing Information Streams in AgriDx.
+
+The Data Flow Diagram (DFD) Level 1 shown in Figure 3.7 traces the movement and processing of data within the AgriDx platform. It breaks down the system into four processes: Process 1.0 (Authenticate User) manages login credentials, storing user identities in the Firestore Users DB. Process 2.0 (Analyze Crop Leaf) takes image inputs, invokes local TFLite files for diagnosis, queries local Hive databases for offline caching, and orchestrates cloud data payloads with the Google Gemini API. Process 3.0 (Manage Community Posts) handles the storage of farmer text queries and uploaded images, syncing them to Firestore and Firebase Storage DBs. Process 4.0 (Fetch Weather & Alerts) captures GPS coordinates, fetches meteorological forecast data from the OpenWeatherMap API, and stores advisories in local cache DB stores.
+
+* Succeeding Sentence in Word:
+  "3.8 Ethical Considerations"
+
+========================================================================

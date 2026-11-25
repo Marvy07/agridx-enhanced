@@ -25,10 +25,18 @@ class _CropCalendarScreenState extends ConsumerState<CropCalendarScreen> with Si
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     super.dispose();
   }

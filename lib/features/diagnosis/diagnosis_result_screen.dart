@@ -236,28 +236,30 @@ class _DiagnosisResultScreenState extends ConsumerState<DiagnosisResultScreen> {
       }
     } catch (e) {
       if (mounted) {
+        // Fall back to offline database for ANY error, to ensure high reliability!
+        final offlineData = _getOfflineData();
+        if (offlineData != null) {
+          print('Gemini failed ($e). Falling back to offline database.');
+          setState(() {
+            _aiData = {
+              ...offlineData,
+              'isOfflineReport': true,
+            };
+          });
+          // Try to update history in background with offline data
+          if (_diagnosisId != null) {
+            final authUser = ref.read(authStateProvider).value;
+            if (authUser != null) {
+              ref.read(diagnosisHistoryServiceProvider).updateDiagnosisReport(authUser.uid, _diagnosisId!, _aiData!);
+            }
+          }
+          return;
+        }
+
         String msg = e.toString();
         if (msg.contains('429') || msg.contains('quota') || msg.contains('RESOURCE_EXHAUSTED')) {
           _aiError = 'AI quota exceeded. Try again later or check your Gemini API plan.';
         } else if (msg.contains('Failed to fetch') || msg.contains('SocketException') || msg.contains('NetworkImage') || msg.contains('connect')) {
-          // If network failed but we have offline database, fall back to it
-          final offlineData = _getOfflineData();
-          if (offlineData != null) {
-            setState(() {
-              _aiData = {
-                ...offlineData,
-                'isOfflineReport': true,
-              };
-            });
-            // Try to update with offline data
-            if (_diagnosisId != null) {
-              final authUser = ref.read(authStateProvider).value;
-              if (authUser != null) {
-                ref.read(diagnosisHistoryServiceProvider).updateDiagnosisReport(authUser.uid, _diagnosisId!, _aiData!);
-              }
-            }
-            return;
-          }
           _aiError = 'No internet connection. Connect to Wi-Fi or mobile data for AI reports.';
         } else {
           _aiError = 'Could not load AI report. Please try again.';

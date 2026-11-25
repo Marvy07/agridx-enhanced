@@ -100,6 +100,12 @@ class AuthService {
         email: email,
         password: password,
       );
+      
+      final fcmToken = await NotificationService.getToken();
+      if (fcmToken != null) {
+        await _db.collection('users').doc(userCredential.user!.uid).set({'fcmToken': fcmToken}, SetOptions(merge: true));
+      }
+      
       return userCredential;
     } catch (e) {
       throw _handleFirebaseError(e);

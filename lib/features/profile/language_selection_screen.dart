@@ -12,8 +12,6 @@ class LanguageSelectionScreen extends ConsumerWidget {
 
     final List<Map<String, dynamic>> languages = [
       {'name': 'English', 'subtitle': 'Farming in your language', 'value': AppLanguage.english},
-      {'name': 'Français', 'subtitle': 'L\'agriculture dans votre langue', 'value': AppLanguage.french},
-      {'name': 'Pidgin', 'subtitle': 'Agri for your own language', 'value': AppLanguage.pidgin},
     ];
 
     return Scaffold(

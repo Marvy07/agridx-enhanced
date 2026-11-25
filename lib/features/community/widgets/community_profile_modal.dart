@@ -69,25 +69,58 @@ class CommunityProfileModal extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.name,
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.stars, color: Colors.grey[700], size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${user.communityPoints}',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey[800]),
-                          ),
-                        ],
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: [
+                            Text(
+                              user.name,
+                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            if (user.farmerType == 'Agricultural Expert' || user.farmerType == 'Researcher')
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue[50],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.blue[300]!),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.verified, size: 14, color: Colors.blue[700]),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      user.farmerType == 'Agricultural Expert' ? 'Verified Expert' : 'Researcher',
+                                      style: TextStyle(
+                                        color: Colors.blue[800],
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.stars, color: Colors.grey[700], size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${user.communityPoints}',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey[800]),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -110,6 +143,12 @@ class CommunityProfileModal extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: themeColor.withOpacity(0.1),
                       shape: BoxShape.circle,
+                      border: (user.farmerType == 'Agricultural Expert' || user.farmerType == 'Researcher')
+                          ? Border.all(color: Colors.blue[400]!, width: 3.5)
+                          : Border.all(color: Colors.white, width: 1.5),
+                      boxShadow: (user.farmerType == 'Agricultural Expert' || user.farmerType == 'Researcher')
+                          ? [BoxShadow(color: Colors.blue.withOpacity(0.15), blurRadius: 8, spreadRadius: 1)]
+                          : null,
                       image: user.photoURL.isNotEmpty
                           ? DecorationImage(image: NetworkImage(user.photoURL), fit: BoxFit.cover)
                           : const DecorationImage(image: NetworkImage('https://i.pravatar.cc/150?u=samuel')),
@@ -124,10 +163,12 @@ class CommunityProfileModal extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _buildInfoRow(Icons.work_outline, user.farmerType),
+                        const Divider(height: 12, thickness: 1),
                         _buildInfoRow(Icons.location_on_outlined, user.location.isNotEmpty ? user.location : 'Unknown'),
-                        const Divider(height: 16, thickness: 1),
+                        const Divider(height: 12, thickness: 1),
                         _buildInfoRow(Icons.chat_bubble_outline, user.language),
-                        const Divider(height: 16, thickness: 1),
+                        const Divider(height: 12, thickness: 1),
                         _buildInfoRow(Icons.emoji_events_outlined, user.rankName),
                       ],
                     ),

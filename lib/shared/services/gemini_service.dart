@@ -19,6 +19,7 @@ class GeminiService {
       generationConfig: GenerationConfig(
         temperature: 0.7,
         maxOutputTokens: 1000,
+        responseMimeType: 'application/json',
       ),
     );
     _visionModel = GenerativeModel(
@@ -27,6 +28,7 @@ class GeminiService {
       generationConfig: GenerationConfig(
         temperature: 0.4,
         maxOutputTokens: 2000,
+        responseMimeType: 'application/json',
       ),
     );
   }
