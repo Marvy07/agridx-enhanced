@@ -1,73 +1,154 @@
-# 🌱 AgriDx — AI-Powered Smart Agriculture & Plant Disease Diagnosis
+# AgriDX Enhanced
 
-AgriDx is an all-in-one smart farming application built with Flutter, TensorFlow Lite, and Gemini AI to assist farmers with instant crop disease detection, offline diagnostics, fertilizer calculation, weather forecasts, and community support.
+An AI-powered agricultural and veterinary intelligence platform for African farmers, smallholders, and field veterinarians.
 
----
-
-## 🚀 Quick Setup Guide for Developers
-
-### Prerequisites
-- **Flutter SDK:** ^3.11.1 or higher (Channel stable)
-- **Dart SDK:** Included with Flutter
-- **Android Studio / VS Code** with Flutter & Dart extensions
-- **Java Development Kit (JDK):** Version 17 or higher
+**Built on:** [agridx-app](https://github.com/Ndesoplacid/agridx-app) by Placid Ndeso  
+**Extended by:** Marvellous  
+**Status:** Phase 0 — Scaffolding
 
 ---
 
-### Step-by-Step Installation
+## Stack
 
-#### 1. Clone the repository
-```bash
-git clone https://github.com/Ndesoplacid/agridx-app.git
-cd agridx-app
+| Layer | Technology |
+|---|---|
+| Mobile + Web | Flutter 3.x (iOS, Android, PWA) |
+| State | Riverpod 2.x |
+| Navigation | go_router |
+| Backend API | FastAPI (Python 3.12) on Cloud Run |
+| Auth | Firebase Authentication |
+| Database | Cloud Firestore |
+| Storage | Firebase Cloud Storage |
+| ML Serving | Vertex AI (EfficientNetV2-B4 + YOLOv8) |
+| Mobile ML | TFLite (offline fallback) |
+| Payments | Paystack + Stripe via RevenueCat |
+| Image CDN | Cloudinary / Imgix |
+| CI/CD | GitHub Actions |
+
+---
+
+## Project Structure
+
+```
+agridx-enhanced/
+├── lib/                    # Flutter app
+│   ├── core/               # Router, theme, constants, providers
+│   ├── features/           # Feature modules
+│   │   ├── auth/           # Login, register
+│   │   ├── detection/      # Plant & animal disease detection
+│   │   ├── library/        # Crop library
+│   │   ├── animals/        # Animal care guides
+│   │   ├── subscription/   # Paywall, subscription management
+│   │   ├── community/      # Forum
+│   │   ├── chat/           # AI assistant
+│   │   ├── weather/        # Weather widget
+│   │   └── profile/        # User profile
+│   └── shared/             # Models, services, widgets
+├── backend/                # FastAPI backend
+│   ├── app/
+│   │   ├── routers/        # API route handlers
+│   │   ├── auth.py         # Firebase token verification
+│   │   ├── models.py       # Pydantic request/response models
+│   │   └── config.py       # Settings from environment
+│   ├── scripts/            # Firestore seed scripts
+│   ├── tests/              # pytest test suite
+│   ├── Dockerfile          # Cloud Run container
+│   └── requirements.txt
+├── firestore/              # Firestore schema + security rules
+│   ├── schema.md           # Collection schemas documented
+│   └── firestore.rules     # Firestore security rules
+└── .github/workflows/      # CI/CD pipelines
+    ├── flutter-ci.yml      # Lint + test + build on push
+    └── deploy-cloud-run.yml # Deploy backend on main push
 ```
 
-#### 2. Configure Environment Variables (`.env`)
-The app requires a `.env` file in the project root for API keys (Gemini, Weather, Groq, News).
-Copy the provided `.env.example` file:
+---
 
-- **Windows (Command Prompt / PowerShell):**
-  ```powershell
-  copy .env.example .env
-  ```
-- **macOS / Linux:**
-  ```bash
-  cp .env.example .env
-  ```
+## Getting Started
 
-> **Note:** Fill in your API keys in `.env` (or request the development `.env` file from the repository maintainer).
+### Flutter App
 
-#### 3. Install Dependencies
 ```bash
+# Install dependencies
 flutter pub get
-```
 
-#### 4. Run the Application
-Connect an Android device (via USB with USB Debugging enabled) or start an Android Emulator, then run:
-```bash
+# Copy env file
+cp .env.example .env
+# Fill in your API keys
+
+# Run on device/emulator
 flutter run
+
+# Build debug APK
+flutter build apk --debug
 ```
 
-To build a release APK:
+### Backend API
+
 ```bash
-flutter build apk --release
+cd backend
+pip install -r requirements.txt
+cp .env.example .env
+# Fill in credentials
+
+# Run locally
+uvicorn main:app --reload --port 8000
+
+# Health check
+curl http://localhost:8000/health
 ```
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## Environment Variables
 
-- **Framework:** Flutter (Mobile Android & iOS)
-- **State Management:** Riverpod 2.x
-- **Local Storage:** Hive & SQLite (Sqflite)
-- **Backend & Auth:** Firebase (Auth, Cloud Firestore, Cloud Storage, Cloud Messaging)
-- **AI & ML Engines:**
-  - **On-Device:** TensorFlow Lite (`agridx_model.tflite`) for instant offline plant disease classification
-  - **Cloud:** Google Generative AI (Gemini Vision) & Groq for comprehensive agricultural recommendations
-- **APIs:** OpenWeatherMap API, NewsAPI
-- **Speech & Audio:** Flutter TTS (Text-to-Speech)
+### Flutter (.env)
+| Key | Description |
+|---|---|
+| GEMINI_API_KEY | Google Gemini API key |
+| OPENWEATHER_API_KEY | OpenWeatherMap API key |
+| GROQ_API_KEY | Groq API key (fallback LLM) |
+| NEWS_API_KEY | NewsAPI key |
+| BACKEND_URL | FastAPI backend URL (default: http://localhost:8000) |
+
+### Backend (backend/.env)
+| Key | Description |
+|---|---|
+| FIREBASE_PROJECT_ID | Firebase project ID |
+| FIREBASE_SERVICE_ACCOUNT_JSON | Service account JSON (for Cloud Run) |
+| GOOGLE_CLOUD_PROJECT | GCP project ID |
+| VERTEX_AI_LOCATION | Vertex AI region (default: us-central1) |
+| PLANT_MODEL_ENDPOINT | Vertex AI plant model endpoint ID |
+| ANIMAL_MODEL_ENDPOINT | Vertex AI animal model endpoint ID |
+| GEMINI_API_KEY | Gemini API key |
+| SENTRY_DSN | Sentry error tracking DSN |
 
 ---
 
-## 📖 Documentation
-- For full app features, user guide, and offline capabilities, see [USER_MANUAL.md](USER_MANUAL.md).
+## Required Accounts (for full deployment)
+
+- [ ] GCP project (Cloud Run, Vertex AI, Secret Manager)
+- [ ] Firebase project (Blaze plan)
+- [ ] Paystack business account (African payments)
+- [ ] Stripe account (global payments)
+- [ ] RevenueCat account (subscription management)
+- [ ] Cloudinary or Imgix account (image CDN)
+
+---
+
+## MVP Features
+
+- Plant disease detection (200+ diseases, 50+ crops)
+- Animal disease detection (cattle, goats, poultry, pigs, dogs, cats)
+- Symptom-based differential diagnosis
+- Crop and animal care library with real photos
+- Subscription tiers (Free / Premium / Pro)
+- Offline mode (TFLite on-device detection)
+- Flutter Web PWA + mobile apps
+
+---
+
+## Attribution
+
+Original Flutter app by [Placid Ndeso](https://github.com/Ndesoplacid/agridx-app) — licensed under original terms.  
+Enhanced version by Marvellous.

@@ -46,3 +46,26 @@ app.*.map.json
 
 # Environment variables
 .env
+
+# Generated Dart files
+*.g.dart
+
+# Build output
+build/
+
+# Dart tool cache
+.dart_tool/
+
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/.pytest_cache/
+
+# Generated Dart files
+*.g.dart
+*.freezed.dart
+
+# Local env
+.env

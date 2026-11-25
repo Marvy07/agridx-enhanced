@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isPremium() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/subscriptions/$(request.auth.uid)).data.tier in ['premium', 'pro'];
+    }
+
+    // Users own their own profile
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Detections: users own their own history
+    match /detections/{detectionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Crop and animal library: public read, backend-only write
+    match /crops/{cropId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /animals/{animalId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /diseases/{diseaseId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Subscriptions: user reads own, backend writes only
+    match /subscriptions/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false;
+    }
+
+    // Alerts: user reads own
+    match /alerts/{alertId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Alert subscriptions: user manages own
+    match /alert_subscriptions/{userId} {
+      allow read, write: if isOwner(userId);
+      match /subscribed/{itemId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Community posts: authenticated users can read/create; owners can edit/delete
+    match /posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+
+      match /answers/{answerId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow update, delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+      }
+    }
+  }
+}
